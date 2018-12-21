@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -46,6 +47,9 @@ func Login(c echo.Context) error {
 	}
 
 	c.Bind(&request)
+
+	fmt.Println(request.Username)
+	fmt.Println(request.Password)
 
 	if strings.Compare(request.Username, "test") == 0 && strings.Compare(request.Password, "1234") == 0 {
 		response.Status="เข้าสู่ระบบได้จ้า"
