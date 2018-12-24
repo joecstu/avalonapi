@@ -7,12 +7,12 @@ import (
 
 func Login(context *gin.Context) {
 	var request struct {
-		*model.Example
+		//*model.Example
 	}
 	var response struct {
 		Status        string `json:",omitempty"` //"success | error | inactive"
 		StatusMessage string `json:",omitempty"`
-		Example       *model.Example
+		//Example      // *model.Example
 	}
 	err := context.BindJSON(&request)
 	if err != nil {
@@ -21,7 +21,7 @@ func Login(context *gin.Context) {
 		context.JSON(http.StatusInternalServerError, response)
 		return
 	}
-	example, err := ds.Mongo.InsertExample(request.Example)
+//	example, err := ds.Mongo.InsertExample(request.Example)
 	if err != nil {
 		response.Status = "error"
 		response.StatusMessage = err.Error()
@@ -30,6 +30,6 @@ func Login(context *gin.Context) {
 	}
 	response.Status = "success"
 	response.StatusMessage = "Insert example"
-	response.Example = example
+	//response.Example = example
 	context.JSON(http.StatusOK, response)
 }
