@@ -9,7 +9,7 @@ import (
 
 func Register(con *gin.Context) {
 	var request struct {
-		*model.UserRegis
+		*model.User
 	}
 	var response struct {
 		Status        string `json:",omitempty"` //"success | error | inactive"
@@ -23,7 +23,7 @@ func Register(con *gin.Context) {
 		return
 	}
 	//example, err := ds.Mongo.InsertExample(request.Example)
-	err = data.CreateUser(request.UserRegis)
+	err = data.CreateUser(request.User)
 
 	if err != nil {
 		response.Status = "Email Used"

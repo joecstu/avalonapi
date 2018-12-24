@@ -2,7 +2,7 @@ package model
 
 import "github.com/globalsign/mgo/bson"
 
-type User struct {
+type Usertest struct {
 	Id bson.ObjectId
 	Username string
 	Password string
