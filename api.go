@@ -1,66 +1,53 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
-	"strings"
+	"github.com/gin-gonic/gin"
 
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
+	"avalonapi/model"
+	"net/http"
+	"avalonapi/data"
 )
+
 
 type ID struct {
 	Username string
 	Password string
 }
 
+
 func main() {
-	// Echo instance
-	e := echo.New()
+	r := gin.Default()
+	//r.GET("/ping",Login )
+	r.POST("/register",func (context *gin.Context) {
+		var request struct {
+			*model.UserRegis
+		}
+		var response struct {
+			Status        string `json:",omitempty"` //"success | error | inactive"
+			StatusMessage string `json:",omitempty"`
+		}
+		err := context.BindJSON(&request)
+		if err != nil {
+			response.Status = "ส่งข้อมูลมาผิดพลาด"
+			response.StatusMessage = err.Error()
+			context.JSON(http.StatusInternalServerError, response)
+			return
+		}
+		//example, err := ds.Mongo.InsertExample(request.Example)
+		err = data.CreateUser(request.UserRegis)
 
-	// Middleware
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
+		if err != nil {
+			response.Status = "Email Used"
+			response.StatusMessage = err.Error()
+			context.JSON(http.StatusOK, response)
+			return
+		}else{
+			response.Status = "RegisterSuccessful"
+			response.StatusMessage = "Insert example"
+			context.JSON(http.StatusOK, response)
+		}
 
-	// Routes
-	e.GET("/", hello)
-	e.POST("login",Login)
-
-	// Start server
-	e.Logger.Fatal(e.Start(":1323"))
-}
-
-// Handler
-func hello(c echo.Context) error {
-
-	return c.JSON(http.StatusOK, "Hello, World!")
-}
-func Login(c echo.Context) error {
-
-	var request struct {
-		Username string
-		Password string
-	}
-	var response struct {
-		Status        string `json:",omitempty"` //"success | error | inactive"
-		StatusMessage string `json:",omitempty"`
-	}
-
-	c.Bind(&request)
-
-	//fmt.Println(request.Username)
-	//fmt.Println(request.Password)
-
-	fmt.Println(request)
-
-
-	if strings.Compare(request.Username, "test") == 0 && strings.Compare(request.Password, "1234") == 0 {
-		response.Status="เข้าสู่ระบบได้จ้า"
-		response.StatusMessage="เข้าเกมได้เลย"
-	}else{
-		response.Status="เข้าสู่ระบบไม่ได้จ้า"
-		response.StatusMessage="ไปส่องกะหรี่"
-	}
-
-	return c.JSON(http.StatusOK,response)
+	})
+	//r.POST("/register",Register)
+	r.Run(":1312") // listen and serve on 0.0.0.0:8080
 }
