@@ -8,6 +8,8 @@ import (
 	"avalonapi/data"
 )
 
+//เราจะทำสำเร็จไปด้วยกันนะ
+
 
 type ID struct {
 	Username string
