@@ -1,4 +1,4 @@
-package main
+package controller
 
 import (
 	"net/http"
@@ -7,7 +7,7 @@ import (
 	"avalonapi/data"
 )
 
-func Register(con *gin.Context) {
+func Register(context *gin.Context) {
 	var request struct {
 		*model.User
 	}
@@ -15,11 +15,11 @@ func Register(con *gin.Context) {
 		Status        string `json:",omitempty"` //"success | error | inactive"
 		StatusMessage string `json:",omitempty"`
 	}
-	err := con.BindJSON(&request)
+	err := context.BindJSON(&request)
 	if err != nil {
 		response.Status = "ส่งข้อมูลมาผิดพลาด"
 		response.StatusMessage = err.Error()
-		con.JSON(http.StatusInternalServerError, response)
+		context.JSON(http.StatusInternalServerError, response)
 		return
 	}
 	//example, err := ds.Mongo.InsertExample(request.Example)
@@ -28,12 +28,12 @@ func Register(con *gin.Context) {
 	if err != nil {
 		response.Status = "Email Used"
 		response.StatusMessage = err.Error()
-		con.JSON(http.StatusOK, response)
+		context.JSON(http.StatusOK, response)
 		return
 	}else{
 		response.Status = "RegisterSuccessful"
 		response.StatusMessage = "Insert example"
-		con.JSON(http.StatusOK, response)
+		context.JSON(http.StatusOK, response)
 	}
 
 }
