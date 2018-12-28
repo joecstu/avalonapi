@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func CreateNickName (context *gin.Context) {
+func ChangeNickName (context *gin.Context) {
 	var request struct {
 		Key string
 		Nickname string
@@ -25,7 +25,7 @@ func CreateNickName (context *gin.Context) {
 		return
 	}
 
-	err,status := data.CreateNickname(request.Nickname,request.Key)
+	err,status := data.ChangeNickName(request.Nickname,request.Key)
 	if status==0 {
 		response.Status = "CreateNickNameFailed"
 		context.JSON(http.StatusOK, response)

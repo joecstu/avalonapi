@@ -53,7 +53,7 @@ func Logout(key string) error {
 	err = c.Update(bson.M{"email": search.Email}, bson.M{"$set": bson.M{"status": "offline"}})
 	return err
 }
-func CreateNickname(nickname string,key string) (error, int) {
+func ChangeNickName(nickname string,key string) (error, int) {
 	session, err := mgo.Dial(DATABASE)
 	defer session.Close()
 	c := session.DB("avalon").C("session")
