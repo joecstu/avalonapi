@@ -27,10 +27,10 @@ func ChangeNickName (context *gin.Context) {
 
 	err,status := data.ChangeNickName(request.Nickname,request.Key)
 	if status==0 {
-		response.Status = "CreateNickNameFailed"
+		response.Status = "ChangeNickNameFailed"
 		context.JSON(http.StatusOK, response)
 	}else{
-		response.Status = "CreateNickNameSuccessful"
+		response.Status = "ChangeNickNameSuccessful"
 		response.Nickname=request.Nickname
 		context.JSON(http.StatusOK, response)
 	}
