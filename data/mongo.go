@@ -71,3 +71,35 @@ func ChangeNickName(nickname string,key string) (error, int) {
 	}
 
 }
+func Useronline() (error, []model.User) {
+	session, err := mgo.Dial(DATABASE)
+	defer session.Close()
+	c := session.DB("avalon").C("session")
+	search := []model.Session{}
+	err = c.Find(nil).All(&search)
+
+	usersearch := model.User{}
+	result := []model.User{}
+
+
+	c = session.DB("avalon").C("user")
+
+
+	for i:=0 ; i < len(search);  i++{
+		c.Find(bson.M{"email":search[i].Email}).One(&usersearch)
+		usersearch.Password=""
+		result =append(result, usersearch)
+		if err != nil {
+		}
+	}
+
+
+	if err != nil {
+		return err,[]model.User{}
+	}else{
+		return err,result
+	}
+
+
+
+}
