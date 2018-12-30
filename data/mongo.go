@@ -2,9 +2,6 @@ package data
 
 import (
 	"avalonapi/model"
-	"fmt"
-
-	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 )
 
@@ -12,12 +9,10 @@ type Test struct {
 	Id string `bson:"_id,omitempty"`
 }
 
-const DATABASE = "mongodb://test:test1234@ds026558.mlab.com:26558/avalon"
-
 func CreateUser(user *model.User) error {
-	user.Nickname = ""
-	user.Status = "offline"
-	session, err := mgo.Dial(DATABASE)
+
+	session, err := CreateSession()
+
 	defer session.Close()
 	c := session.DB("avalon").C("user")
 
@@ -26,7 +21,9 @@ func CreateUser(user *model.User) error {
 }
 
 func Login(user *model.User) (error, string, string) {
-	session, err := mgo.Dial(DATABASE)
+
+	session, err := CreateSession()
+
 	defer session.Close()
 	c := session.DB("avalon").C("user")
 	result := model.User{}
@@ -38,12 +35,12 @@ func Login(user *model.User) (error, string, string) {
 	c = session.DB("avalon").C("session")
 	key := bson.NewObjectId()
 	err = c.Insert(bson.M{"_id": key, "email": result.Email})
-	fmt.Println(key.Hex())
+	//fmt.Println(key.Hex())
 	return err, result.Nickname, key.Hex()
 }
 
 func Logout(key string) error {
-	session, err := mgo.Dial(DATABASE)
+	session, err := CreateSession()
 	defer session.Close()
 	c := session.DB("avalon").C("session")
 	search := model.Session{}
@@ -56,21 +53,21 @@ func Logout(key string) error {
 }
 
 func LogoutAll() error {
-	session, err := mgo.Dial(DATABASE)
+	session, err := CreateSession()
 	defer session.Close()
 	c := session.DB("avalon").C("session")
 	search := []*model.Session{}
 	err = c.Find(nil).All(&search)
 	c.RemoveAll(nil)
 	c = session.DB("avalon").C("user")
-	for i:=0;i< len(search);i++  {
+	for i := 0; i < len(search); i++ {
 		err = c.Update(bson.M{"email": search[i].Email}, bson.M{"$set": bson.M{"status": "offline"}})
 	}
 	return err
 }
 
 func ChangeNickName(nickname string, key string) (error, int) {
-	session, err := mgo.Dial(DATABASE)
+	session, err := CreateSession()
 	defer session.Close()
 	c := session.DB("avalon").C("session")
 	search := model.Session{}
@@ -88,7 +85,7 @@ func ChangeNickName(nickname string, key string) (error, int) {
 
 }
 func Useronline() (error, []model.User) {
-	session, err := mgo.Dial(DATABASE)
+	session, err := CreateSession()
 	defer session.Close()
 	c := session.DB("avalon").C("session")
 	search := []model.Session{}
