@@ -3,6 +3,7 @@ package data
 import (
 	"avalonapi/model"
 	"fmt"
+
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 )
@@ -53,7 +54,22 @@ func Logout(key string) error {
 	err = c.Update(bson.M{"email": search.Email}, bson.M{"$set": bson.M{"status": "offline"}})
 	return err
 }
-func ChangeNickName(nickname string,key string) (error, int) {
+
+func LogoutAll() error {
+	session, err := mgo.Dial(DATABASE)
+	defer session.Close()
+	c := session.DB("avalon").C("session")
+	search := []*model.Session{}
+	err = c.Find(nil).All(&search)
+	c.RemoveAll(nil)
+	c = session.DB("avalon").C("user")
+	for i:=0;i< len(search);i++  {
+		err = c.Update(bson.M{"email": search[i].Email}, bson.M{"$set": bson.M{"status": "offline"}})
+	}
+	return err
+}
+
+func ChangeNickName(nickname string, key string) (error, int) {
 	session, err := mgo.Dial(DATABASE)
 	defer session.Close()
 	c := session.DB("avalon").C("session")
@@ -62,12 +78,12 @@ func ChangeNickName(nickname string,key string) (error, int) {
 
 	usersearch := []model.User{}
 	c = session.DB("avalon").C("user")
-	err = c.Find(bson.M{"nickname":nickname}).All(&usersearch)
-	if(len(usersearch)==1){
-		return err,0
-	}else{
+	err = c.Find(bson.M{"nickname": nickname}).All(&usersearch)
+	if len(usersearch) == 1 {
+		return err, 0
+	} else {
 		err = c.Update(bson.M{"email": search.Email}, bson.M{"$set": bson.M{"nickname": nickname}})
-		return err,1
+		return err, 1
 	}
 
 }
@@ -81,25 +97,20 @@ func Useronline() (error, []model.User) {
 	usersearch := model.User{}
 	result := []model.User{}
 
-
 	c = session.DB("avalon").C("user")
 
-
-	for i:=0 ; i < len(search);  i++{
-		c.Find(bson.M{"email":search[i].Email}).One(&usersearch)
-		usersearch.Password=""
-		result =append(result, usersearch)
+	for i := 0; i < len(search); i++ {
+		c.Find(bson.M{"email": search[i].Email}).One(&usersearch)
+		usersearch.Password = ""
+		result = append(result, usersearch)
 		if err != nil {
 		}
 	}
 
-
 	if err != nil {
-		return err,[]model.User{}
-	}else{
-		return err,result
+		return err, []model.User{}
+	} else {
+		return err, result
 	}
-
-
 
 }

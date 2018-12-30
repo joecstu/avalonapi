@@ -2,18 +2,19 @@ package controller
 
 import (
 	"avalonapi/data"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
-func Logout (context *gin.Context) {
+func Logout(context *gin.Context) {
 	var request struct {
 		Key string
 	}
 	var response struct {
 		Status        string `json:",omitempty"` //"success | error | inactive"
 		StatusMessage string `json:",omitempty"`
-		Nickname string
+		Nickname      string
 	}
 	err := context.BindJSON(&request)
 	if err != nil {
@@ -27,11 +28,24 @@ func Logout (context *gin.Context) {
 	if err != nil {
 		response.Status = "LogoutFailed"
 		context.JSON(http.StatusOK, response)
-	}else{
+	} else {
 		response.Status = "LogoutSuccessful"
 		context.JSON(http.StatusOK, response)
 	}
 
-
+}
+func LogoutAll(context *gin.Context) {
+	var response struct {
+		Status        string `json:",omitempty"` //"success | error | inactive"
+		StatusMessage string `json:",omitempty"`
+	}
+	err := data.LogoutAll()
+	if err != nil {
+		response.Status = "LogoutAllFailed"
+		context.JSON(http.StatusOK, response)
+	} else {
+		response.Status = "LogoutAllSuccessful"
+		context.JSON(http.StatusOK, response)
+	}
 
 }
