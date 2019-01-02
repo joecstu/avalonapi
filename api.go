@@ -8,11 +8,6 @@ import (
 
 //เราจะทำสำเร็จไปด้วยกันนะ
 
-type ID struct {
-	Username string
-	Password string
-}
-
 func main() {
 	r := gin.Default()
 	//r.GET("/ping",Login )
