@@ -17,6 +17,7 @@ func main() {
 	r.POST("/changenickname", controller.ChangeNickName)
 	r.GET("/useronline", controller.Useronline)
 	r.GET("/logoutall", controller.LogoutAll)
+	r.POST("/createroom", controller.CreateRoom)
 
 	r.Run(":1312") // listen and serve on 0.0.0.0:8080
 }

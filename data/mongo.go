@@ -111,3 +111,29 @@ func Useronline() (error, []model.User) {
 	}
 
 }
+func CreateRoom(nickname string, key string) (model.Room, error, int) {
+	session, err := CreateSession()
+	defer session.Close()
+	c := session.DB("avalon").C("session")
+	checklogin, err := c.FindId(bson.ObjectIdHex(key)).Count()
+	if (checklogin != 1) {
+		return model.Room{}, err, 0
+	}
+	c = session.DB("avalon").C("room")
+	room := []model.Room{}
+	c.Find(nil).All(&room)
+	roomnew := model.Room{}
+	roomnew.Roomid = (len(room) + 1)
+	roomnew.Numberplayer = 1
+	roomnew.Maxplayer = 5
+	roomnew.Nameplayer = append(roomnew.Nameplayer, nickname)
+	roomnew.Host = nickname
+	err = c.Insert(roomnew)
+	if err != nil {
+		return roomnew, nil, 0
+	} else {
+		return roomnew, nil, 1
+	}
+
+
+}
