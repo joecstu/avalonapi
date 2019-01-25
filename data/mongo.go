@@ -137,3 +137,46 @@ func CreateRoom(nickname string, key string) (model.Room, error, int) {
 
 
 }
+
+func Joinroom(nickname string, key string,roomid int) (model.Room, error, int) {
+	session, err := CreateSession()
+	defer session.Close()
+	c := session.DB("avalon").C("session")
+	checklogin, err := c.FindId(bson.ObjectIdHex(key)).Count()
+	if (checklogin != 1) {
+		return model.Room{}, err, 0
+	}
+	c = session.DB("avalon").C("room")
+	room := model.Room{}
+	c.Find(bson.M{"roomid":roomid}).One(&room)
+	room.Nameplayer=append(room.Nameplayer,nickname)
+
+	c.Update(bson.M{"roomid":roomid},bson.M{"$set": bson.M{"nameplayer":room.Nameplayer}})
+
+	c.Find(bson.M{"roomid":roomid}).One(&room)
+
+
+
+	if err != nil {
+		return room, nil, 0
+	} else {
+		return room, nil, 1
+	}
+
+
+}
+func Getroom(roomid int) (model.Room, error, int) {
+	session, err := CreateSession()
+	defer session.Close()
+	c := session.DB("avalon").C("room")
+	room := model.Room{}
+	c.Find(bson.M{"roomid":roomid}).One(&room)
+
+	if err != nil {
+		return room, nil, 0
+	} else {
+		return room, nil, 1
+	}
+
+
+}

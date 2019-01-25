@@ -18,6 +18,8 @@ func main() {
 	r.GET("/useronline", controller.Useronline)
 	r.GET("/logoutall", controller.LogoutAll)
 	r.POST("/createroom", controller.CreateRoom)
+	r.POST("/joinroom",controller.Joinroom)
+	r.POST("/getroom",controller.Getroom)
 
 	r.Run(":1312") // listen and serve on 0.0.0.0:8080
 }
