@@ -3,19 +3,20 @@ package controller
 import (
 	"avalonapi/data"
 	"avalonapi/model"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
-func CreateRoom (context *gin.Context) {
+func CreateRoom(context *gin.Context) {
 	var request struct {
-		Key string
+		Key      string
 		Nickname string
 	}
 	var response struct {
 		Status        string `json:",omitempty"` //"success | error | inactive"
 		StatusMessage string `json:",omitempty"`
-		Room model.Room
+		Room          model.Room
 	}
 	err := context.BindJSON(&request)
 
@@ -25,27 +26,27 @@ func CreateRoom (context *gin.Context) {
 		context.JSON(http.StatusInternalServerError, response)
 		return
 	}
-	status:=1
-	response.Room,err,status = data.CreateRoom(request.Nickname,request.Key)
-	if status==0 {
+	status := 1
+	response.Room, err, status = data.CreateRoom(request.Nickname, request.Key)
+	if status == 0 {
 		response.Status = "CreateRoomFailed"
-		response.Room=model.Room{}
+		response.Room = model.Room{}
 		context.JSON(http.StatusOK, response)
-	}else{
+	} else {
 		response.Status = "CreateRoomSuccessful"
 		context.JSON(http.StatusOK, response)
 	}
 }
-func Joinroom (context *gin.Context) {
+func Joinroom(context *gin.Context) {
 	var request struct {
-		Key string
+		Key      string
 		Nickname string
-		Roomid int
+		Roomid   int
 	}
 	var response struct {
 		Status        string `json:",omitempty"` //"success | error | inactive"
 		StatusMessage string `json:",omitempty"`
-		Room model.Room
+		Room          model.Room
 	}
 	err := context.BindJSON(&request)
 
@@ -55,27 +56,26 @@ func Joinroom (context *gin.Context) {
 		context.JSON(http.StatusInternalServerError, response)
 		return
 	}
-	status:=1
-	response.Room,err,status = data.Joinroom(request.Nickname,request.Key,request.Roomid)
-	if status==0 {
+	status := 1
+	response.Room, err, status = data.Joinroom(request.Nickname, request.Key, request.Roomid)
+	if status == 0 {
 		response.Status = "JoinRoomFailed"
-		response.Room=model.Room{}
+		response.Room = model.Room{}
 		context.JSON(http.StatusOK, response)
-	}else{
+	} else {
 		response.Status = "JoinRoomSuccessful"
 		context.JSON(http.StatusOK, response)
 	}
 }
 
-
-func Getroom (context *gin.Context) {
+func Getroom(context *gin.Context) {
 	var request struct {
 		Roomid int
 	}
 	var response struct {
 		Status        string `json:",omitempty"` //"success | error | inactive"
 		StatusMessage string `json:",omitempty"`
-		Room model.Room
+		Room          model.Room
 	}
 	err := context.BindJSON(&request)
 
@@ -85,14 +85,55 @@ func Getroom (context *gin.Context) {
 		context.JSON(http.StatusInternalServerError, response)
 		return
 	}
-	status:=1
-	response.Room,err,status = data.Getroom(request.Roomid)
-	if status==0 {
+	status := 1
+	response.Room, err, status = data.Getroom(request.Roomid)
+	if status == 0 {
 		response.Status = "GetRoomFailed"
-		response.Room=model.Room{}
+		response.Room = model.Room{}
 		context.JSON(http.StatusOK, response)
-	}else{
+	} else {
 		response.Status = "GetRoomSuccessful"
+		context.JSON(http.StatusOK, response)
+	}
+}
+
+func GetAllroom(context *gin.Context) {
+
+	var response struct {
+		Status        string `json:",omitempty"` //"success | error | inactive"
+		StatusMessage string `json:",omitempty"`
+		Room          []model.Room
+	}
+	status:=1
+	err :=http.ErrAbortHandler
+	err, response.Room, status = data.GetAllroom()
+	if status == 0 {
+		response.Status = err.Error()
+		response.Room = []model.Room{}
+		context.JSON(http.StatusOK, response)
+	} else {
+		response.Status = "GetAllroomSuccessful"
+		context.JSON(http.StatusOK, response)
+	}
+}
+
+
+func DeleteAllroom(context *gin.Context) {
+
+	var response struct {
+		Status        string `json:",omitempty"` //"success | error | inactive"
+		StatusMessage string `json:",omitempty"`
+		Room          []model.Room
+	}
+	status:=1
+	err :=http.ErrAbortHandler
+	err, response.Room, status = data.DeleteAllroom()
+	if status == 0 {
+		response.Status = err.Error()
+		response.Room = []model.Room{}
+		context.JSON(http.StatusOK, response)
+	} else {
+		response.Status = "DeleteAllroomSuccessful"
 		context.JSON(http.StatusOK, response)
 	}
 }

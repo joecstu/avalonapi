@@ -2,6 +2,7 @@ package data
 
 import (
 	"avalonapi/model"
+
 	"github.com/globalsign/mgo/bson"
 )
 
@@ -116,7 +117,7 @@ func CreateRoom(nickname string, key string) (model.Room, error, int) {
 	defer session.Close()
 	c := session.DB("avalon").C("session")
 	checklogin, err := c.FindId(bson.ObjectIdHex(key)).Count()
-	if (checklogin != 1) {
+	if checklogin != 1 {
 		return model.Room{}, err, 0
 	}
 	c = session.DB("avalon").C("room")
@@ -135,34 +136,30 @@ func CreateRoom(nickname string, key string) (model.Room, error, int) {
 		return roomnew, nil, 1
 	}
 
-
 }
 
-func Joinroom(nickname string, key string,roomid int) (model.Room, error, int) {
+func Joinroom(nickname string, key string, roomid int) (model.Room, error, int) {
 	session, err := CreateSession()
 	defer session.Close()
 	c := session.DB("avalon").C("session")
 	checklogin, err := c.FindId(bson.ObjectIdHex(key)).Count()
-	if (checklogin != 1) {
+	if checklogin != 1 {
 		return model.Room{}, err, 0
 	}
 	c = session.DB("avalon").C("room")
 	room := model.Room{}
-	c.Find(bson.M{"roomid":roomid}).One(&room)
-	room.Nameplayer=append(room.Nameplayer,nickname)
+	c.Find(bson.M{"roomid": roomid}).One(&room)
+	room.Nameplayer = append(room.Nameplayer, nickname)
 
-	c.Update(bson.M{"roomid":roomid},bson.M{"$set": bson.M{"nameplayer":room.Nameplayer}})
+	c.Update(bson.M{"roomid": roomid}, bson.M{"$set": bson.M{"nameplayer": room.Nameplayer}})
 
-	c.Find(bson.M{"roomid":roomid}).One(&room)
-
-
+	c.Find(bson.M{"roomid": roomid}).One(&room)
 
 	if err != nil {
 		return room, nil, 0
 	} else {
 		return room, nil, 1
 	}
-
 
 }
 func Getroom(roomid int) (model.Room, error, int) {
@@ -170,7 +167,7 @@ func Getroom(roomid int) (model.Room, error, int) {
 	defer session.Close()
 	c := session.DB("avalon").C("room")
 	room := model.Room{}
-	c.Find(bson.M{"roomid":roomid}).One(&room)
+	c.Find(bson.M{"roomid": roomid}).One(&room)
 
 	if err != nil {
 		return room, nil, 0
@@ -178,5 +175,34 @@ func Getroom(roomid int) (model.Room, error, int) {
 		return room, nil, 1
 	}
 
+}
+func GetAllroom() (error, []model.Room, int) {
+	session, err := CreateSession()
+	defer session.Close()
+	c := session.DB("avalon").C("room")
+	room := []model.Room{}
+	c.Find(nil).All(&room)
+
+	if err != nil {
+		return nil, room, 0
+	} else {
+		return nil, room, 1
+	}
+
+}
+
+
+func DeleteAllroom() (error, []model.Room, int) {
+	session, err := CreateSession()
+	defer session.Close()
+	c := session.DB("avalon").C("room")
+	room := []model.Room{}
+	c.RemoveAll(nil)
+
+	if err != nil {
+		return nil, room, 0
+	} else {
+		return nil, room, 1
+	}
 
 }
