@@ -153,14 +153,14 @@ func LeftRoom(context *gin.Context) {
 		Status        string `json:",omitempty"` //"success | error | inactive"
 		StatusMessage string `json:",omitempty"`
 	}
-	err := context.BindJSON(&request)
+	 context.BindJSON(&request)
 
 	status:=1
 
 	//err :=http.ErrAbortHandler
-	err, _, status = data.LeftRoom(request.Roomid,request.Nickname)
+	_, _, status = data.LeftRoom(request.Roomid,request.Nickname)
 	if status == 0 {
-		response.Status = err.Error()
+		response.Status = "LeftRoomFailed"
 		context.JSON(http.StatusOK, response)
 	} else {
 		response.Status = "LeftRoomSuccessful"

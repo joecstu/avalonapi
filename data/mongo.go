@@ -221,10 +221,18 @@ func LeftRoom(roomid int,nickname string) (error, model.Room, int) {
 	c.Find(bson.M{"roomid":roomid}).One(&room)
 	//fmt.Println()
 
+	count :=0
 	for i:=0;i< len(room.Nameplayer);i++  {
 		if(strings.Compare(room.Nameplayer[i],nickname)!=0){
 			new = append(new,room.Nameplayer[i] )
+		}else{
+			count++
 		}
+
+	}
+
+	if(count==0){
+		return nil, room, 0
 	}
 
 	//fmt.Println(new)
