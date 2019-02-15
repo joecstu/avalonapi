@@ -22,6 +22,7 @@ func main() {
 	r.POST("/getroom", controller.Getroom)
 	r.GET("/getallroom", controller.GetAllroom)
 	r.GET("/deleteallroom", controller.DeleteAllroom)
+	r.POST("leftroom",controller.LeftRoom)
 
 
 	r.Run(":1312") // listen and serve on 0.0.0.0:8080

@@ -119,7 +119,6 @@ func GetAllroom(context *gin.Context) {
 
 
 func DeleteAllroom(context *gin.Context) {
-
 	var response struct {
 		Status        string `json:",omitempty"` //"success | error | inactive"
 		StatusMessage string `json:",omitempty"`
@@ -127,13 +126,44 @@ func DeleteAllroom(context *gin.Context) {
 	}
 	status:=1
 	err :=http.ErrAbortHandler
+
 	err, response.Room, status = data.DeleteAllroom()
+
+
+
 	if status == 0 {
 		response.Status = err.Error()
 		response.Room = []model.Room{}
 		context.JSON(http.StatusOK, response)
 	} else {
 		response.Status = "DeleteAllroomSuccessful"
+		context.JSON(http.StatusOK, response)
+	}
+}
+
+
+
+func LeftRoom(context *gin.Context) {
+
+	var request struct {
+		Roomid int
+		Nickname string
+	}
+	var response struct {
+		Status        string `json:",omitempty"` //"success | error | inactive"
+		StatusMessage string `json:",omitempty"`
+	}
+	err := context.BindJSON(&request)
+
+	status:=1
+
+	//err :=http.ErrAbortHandler
+	err, _, status = data.LeftRoom(request.Roomid,request.Nickname)
+	if status == 0 {
+		response.Status = err.Error()
+		context.JSON(http.StatusOK, response)
+	} else {
+		response.Status = "LeftRoomSuccessful"
 		context.JSON(http.StatusOK, response)
 	}
 }

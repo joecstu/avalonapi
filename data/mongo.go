@@ -2,6 +2,7 @@ package data
 
 import (
 	"avalonapi/model"
+	"strings"
 
 	"github.com/globalsign/mgo/bson"
 )
@@ -193,6 +194,7 @@ func GetAllroom() (error, []model.Room, int) {
 
 
 func DeleteAllroom() (error, []model.Room, int) {
+
 	session, err := CreateSession()
 	defer session.Close()
 	c := session.DB("avalon").C("room")
@@ -204,5 +206,39 @@ func DeleteAllroom() (error, []model.Room, int) {
 	} else {
 		return nil, room, 1
 	}
+
+}
+
+func LeftRoom(roomid int,nickname string) (error, model.Room, int) {
+
+
+	session, err := CreateSession()
+	defer session.Close()
+	c := session.DB("avalon").C("room")
+	room := model.Room{}
+	new :=[]string{}
+//fmt.Println(roomid,nickname)
+	c.Find(bson.M{"roomid":roomid}).One(&room)
+	//fmt.Println()
+
+	for i:=0;i< len(room.Nameplayer);i++  {
+		if(strings.Compare(room.Nameplayer[i],nickname)!=0){
+			new = append(new,room.Nameplayer[i] )
+		}
+	}
+
+	//fmt.Println(new)
+
+	//collection.Update(bson.M{"_id": id}, bson.M{"$set": bson.M{"name": "new Name"}}
+
+
+	c.Update(bson.M{"roomid": roomid},bson.M{"$set": bson.M{"nameplayer": new}})
+
+	if err != nil {
+		return nil, room, 0
+	} else {
+		return nil, room, 1
+	}
+
 
 }
