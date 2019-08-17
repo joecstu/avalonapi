@@ -163,6 +163,7 @@ func Joinroom(nickname string, key string, roomid int) (model.Room, error, int) 
 	}
 
 }
+
 func Getroom(roomid int) (model.Room, error, int) {
 	session, err := CreateSession()
 	defer session.Close()
@@ -192,7 +193,6 @@ func GetAllroom() (error, []model.Room, int) {
 
 }
 
-
 func DeleteAllroom() (error, []model.Room, int) {
 
 	session, err := CreateSession()
@@ -209,44 +209,35 @@ func DeleteAllroom() (error, []model.Room, int) {
 
 }
 
-func LeftRoom(roomid int,nickname string) (error, model.Room, int) {
-
+func LeftRoom(roomid int, nickname string) (error, model.Room, int) {
 
 	session, err := CreateSession()
 	defer session.Close()
 	c := session.DB("avalon").C("room")
 	room := model.Room{}
-	new :=[]string{}
-//fmt.Println(roomid,nickname)
-	c.Find(bson.M{"roomid":roomid}).One(&room)
-	//fmt.Println()
+	new := []string{}
+	c.Find(bson.M{"roomid": roomid}).One(&room)
+	count := 0
 
-	count :=0
-	for i:=0;i< len(room.Nameplayer);i++  {
-		if(strings.Compare(room.Nameplayer[i],nickname)!=0){
-			new = append(new,room.Nameplayer[i] )
-		}else{
+	for i := 0; i < len(room.Nameplayer); i++ {
+		if strings.Compare(room.Nameplayer[i], nickname) != 0 {
+			new = append(new, room.Nameplayer[i])
+		} else {
 			count++
 		}
 
 	}
 
-	if(count==0){
+	if count == 0 {
 		return nil, room, 0
 	}
 
-	//fmt.Println(new)
-
-	//collection.Update(bson.M{"_id": id}, bson.M{"$set": bson.M{"name": "new Name"}}
-
-
-	c.Update(bson.M{"roomid": roomid},bson.M{"$set": bson.M{"nameplayer": new}})
+	c.Update(bson.M{"roomid": roomid}, bson.M{"$set": bson.M{"nameplayer": new}})
 
 	if err != nil {
 		return nil, room, 0
 	} else {
 		return nil, room, 1
 	}
-
 
 }

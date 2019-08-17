@@ -1,12 +1,10 @@
 package model
 
 type Room struct {
-	Roomid int
+	Roomid       int
 	Numberplayer int
-	Maxplayer int
-	Status string
-	Host string
-	Nameplayer []string
-
-
+	Maxplayer    int
+	Status       string
+	Host         string
+	Nameplayer   []string
 }

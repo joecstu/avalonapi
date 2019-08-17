@@ -3,8 +3,8 @@ package controller
 import (
 	"avalonapi/data"
 	"avalonapi/model"
-	"net/http"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 func Login(context *gin.Context) {
@@ -14,8 +14,8 @@ func Login(context *gin.Context) {
 	var response struct {
 		Status        string `json:",omitempty"` //"success | error | inactive"
 		StatusMessage string `json:",omitempty"`
-		Key string
-		Nickname string
+		Key           string
+		Nickname      string
 	}
 	err := context.BindJSON(&request)
 	if err != nil {
@@ -25,16 +25,16 @@ func Login(context *gin.Context) {
 		return
 	}
 	//example, err := ds.Mongo.InsertExample(request.Example)
-	err,nickname,key := data.Login(request.User)
+	err, nickname, key := data.Login(request.User)
 
 	if err != nil {
 		response.Status = "LoginFailed"
 		response.StatusMessage = err.Error()
 		context.JSON(http.StatusOK, response)
 		return
-	}else{
+	} else {
 		response.Status = "LoginSuccessful"
-		response.Key=key
+		response.Key = key
 		response.Nickname = nickname
 		context.JSON(http.StatusOK, response)
 	}

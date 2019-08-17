@@ -1,10 +1,10 @@
 package controller
 
 import (
-	"net/http"
-	"github.com/gin-gonic/gin"
-	"avalonapi/model"
 	"avalonapi/data"
+	"avalonapi/model"
+	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 func Register(context *gin.Context) {
@@ -30,7 +30,7 @@ func Register(context *gin.Context) {
 		response.StatusMessage = err.Error()
 		context.JSON(http.StatusOK, response)
 		return
-	}else{
+	} else {
 		response.Status = "RegisterSuccessful"
 		response.StatusMessage = "Insert example"
 		context.JSON(http.StatusOK, response)

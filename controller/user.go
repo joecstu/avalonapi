@@ -16,13 +16,13 @@ func Useronline(context *gin.Context) {
 	}
 
 	//example, err := ds.Mongo.InsertExample(request.Example)
-	err :=http.ErrAbortHandler
-	err,response.Useronline = data.Useronline()
+	err := http.ErrAbortHandler
+	err, response.Useronline = data.Useronline()
 
 	if err != nil {
 		response.Status = "GetUserOnlineSuccessful"
 		context.JSON(http.StatusOK, response)
-	}else{
+	} else {
 		response.Status = "GetUserOnlineSuccessful"
 		context.JSON(http.StatusOK, response)
 	}
